@@ -7,12 +7,12 @@ public class KKSceneManager : MonoBehaviour
 {
     public static KKSceneManager singleton; //  シーンをまたいでも1つだけ存在するようにする
 
-    private static readonly string _scene_MainMenu = "main_menu";
-    private static readonly string _scene_game = "game";
+    private static readonly string _scene_Menu = "Menu";
+    private static readonly string _scene_Main = "Main";
     public enum SceneType
     {
         Menu,
-        Game,
+        Main,
     }
 
     void Awake()
@@ -46,7 +46,7 @@ public class KKSceneManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.G))
         {
-            SceneChange(SceneType.Game);
+            SceneChange(SceneType.Main);
         }
     }
 
@@ -56,15 +56,27 @@ public class KKSceneManager : MonoBehaviour
         {
             case SceneType.Menu:    //  メインシーン
                 {
-                    SceneManager.LoadScene(_scene_MainMenu, LoadSceneMode.Single);
+                    SceneManager.LoadScene(_scene_Menu, LoadSceneMode.Single);
                 }
                 break;
-            case SceneType.Game:    //  ゲームシーン
+            case SceneType.Main:    //  ゲームシーン
                 {
-                    SceneManager.LoadScene(_scene_game, LoadSceneMode.Single);
+                    SceneManager.LoadScene(_scene_Main, LoadSceneMode.Single);
                 }
                 break;
         }
     }
+
+    public void GameSceneChangeButton()
+    {
+        SceneChange(SceneType.Main);
+
+    }
+
+    public void MenuSceneChangeButton()
+    {
+        SceneChange(SceneType.Menu);
+    }
+
 
 }
