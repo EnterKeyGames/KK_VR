@@ -11,18 +11,23 @@ public class CameraChange : MonoBehaviour
     private int nowCameraPosiL;
 
     private Vector3 CameraPosiVec;
+    private Quaternion CameraRotQua;
+
 
     // Update is called once per frame
     void Update()
     {
         CameraPosiVec = new Vector3();
+        CameraRotQua = new Quaternion();
 
-       if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Q))
        {
 
             CameraPosiVec = cameraPosiList[nowCameraPosiL].position;
+            CameraRotQua = cameraPosiList[nowCameraPosiL].rotation;
 
             gameCamera.position = CameraPosiVec;
+            gameCamera.rotation = CameraRotQua;
       
 
             nowCameraPosiL++;
