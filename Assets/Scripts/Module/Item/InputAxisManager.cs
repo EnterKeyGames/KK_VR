@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class InputAxisManager : MonoBehaviour
 {
+    [SerializeField] public Vector2 axisVec;
+
     [SerializeField] public float axisV;
     [SerializeField] public float axisH;
+    [SerializeField] public float angle;
 
     [SerializeField] public float lastAxisV;
     [SerializeField] public float lastAxisH;
@@ -30,7 +33,9 @@ public class InputAxisManager : MonoBehaviour
     [SerializeField] public bool pushLeftDown;
 
     [SerializeField] public bool inclineOn;
+    [SerializeField] bool notIncline;
 
+    //一回だけ呼び出す用の変数、試作途中なのでコメDiscribeントアウト
 //    [SerializeField] public bool oneCallUp;
 //    [SerializeField] bool oneCallDown;
 //    [SerializeField] bool oneCallRight;
@@ -65,22 +70,29 @@ public class InputAxisManager : MonoBehaviour
         AxisPushRelease();  //タテヨコナナメ８方向の入力を変数で取得
         AllAxis();          //なにかしら押しているか調べる　合計値を取得 bool float
 
-        InputAxisPush();    //直前に押しているか調べる bool
-        InputAxisRelease(); //直前に離しているか調べる bool
+        AxisOnOff();        //なにかしらおしているかどうかboolで返す
 
-//        OneCall();        //GetKeyDown、GetKeyUpのように押した瞬間、離した瞬間を一度だけ取得　未実装
+//        OneCall();        //GetKeyDown、GetKeyUpのように押した瞬間、離した瞬間を一度だけ取得　試作途中
 
         StartCoroutine(LastInputAxis());    //直前のフレームの変数を取得する
         StartCoroutine(LastInputAllAxis()); //直前のフレームの変数の合計値を取得 bool float
+        LineCheck();                        //H,Vの連続入力とナナメの入力を判定して制限するためのチェック
 
         //syokika();                        //初期化　すべての変数を初期値にする
     }
 
     void InputAxis()
     {
-        axisV = Mathf.RoundToInt(Input.GetAxis("Vertical") * 10);
-        axisH = Mathf.RoundToInt(Input.GetAxis("Horizontal") * 10);
+        axisVec.x = Mathf.RoundToInt(Input.GetAxis("ItemPocketH") * 10);
+        axisVec.y = Mathf.RoundToInt(Input.GetAxis("ItemPocketV") * 10);
+
+        axisV = Mathf.RoundToInt(Input.GetAxis("ItemPocketV") * 10);
+        axisH = Mathf.RoundToInt(Input.GetAxis("ItemPocketH") * 10);
+
+        angle = Mathf.RoundToInt(Mathf.Atan2(axisVec.y, axisVec.x) * Mathf.Rad2Deg);
     }
+
+
 
     IEnumerator LastInputAxis()
     {
@@ -95,6 +107,8 @@ public class InputAxisManager : MonoBehaviour
 
     void AllAxis()
     {
+        allV = axisV * axisV;
+        allH = axisH * axisH;
         allAxis = axisV * axisV + axisH * axisH;
     }
 
@@ -105,21 +119,42 @@ public class InputAxisManager : MonoBehaviour
             yield return null;
         }
 
+        allLastV = lastAxisV * lastAxisV;
+        allLastH = lastAxisH * lastAxisH;
         allLastAxis = lastAxisV * lastAxisV + lastAxisH * lastAxisH;
     }
 
-
-    void InputAxisPush()
+    void AxisOnOff()
     {
-        if (allAxis > allLastAxis)
+        //        if (allAxis > allLastAxis)
+        //        {
+        //            if (!on)
+        //            {
+        //                on = true;
+        //            }
+        //
+        //        }
+        if (pushUp || pushRight || pushLeft || pushDown || pushRightUp || pushLeftUp || pushRightDown || pushLeftDown)
         {
-            if (!on)
-            {
-                on = true;
-            }
+            if (!on) on = true;
+        }
 
+        //        if (allAxis < allLastAxis)
+        //        {
+        //            if (allAxis < 100)
+        //            {
+        //                if (on)
+        //                {
+        //                    on = false;
+        //                }
+        //            }
+        //        }
+        if (!pushUp && !pushRight && !pushLeft && !pushDown && !pushRightUp && !pushLeftUp && !pushRightDown && !pushLeftDown)
+        {
+            if (on) on = false;
         }
     }
+
 
     void AxisPushRelease()
     {
@@ -141,10 +176,13 @@ public class InputAxisManager : MonoBehaviour
 
     void Incline()
     {
-        AxisRightUp();
-        AxisLeftUp();
-        AxisRightDown();
-        AxisLeftDown();
+        if (!notIncline)
+        {
+            AxisRightUp();
+            AxisLeftUp();
+            AxisRightDown();
+            AxisLeftDown();
+        }
     }
 
     void AxisUp()
@@ -165,7 +203,6 @@ public class InputAxisManager : MonoBehaviour
                     pushUp = false;
             }
         }
-
     }
 
     void AxisRight()
@@ -186,7 +223,6 @@ public class InputAxisManager : MonoBehaviour
                     pushRight = false;
             }
         }
-
     }
 
     void AxisLeft()
@@ -233,15 +269,18 @@ public class InputAxisManager : MonoBehaviour
     {
         if (axisV > 0 && axisH > 0)
         {
-            if (axisV > lastAxisV || axisH > lastAxisH)
-            {
-                if (!pushRightUp)
+//            if (notIncline)
+//            {
+                if (axisV > lastAxisV || axisH > lastAxisH)
                 {
-                    pushRightUp = true;
-                    pushUp = false;
-                    pushRight = false;
-                };
-            }
+                    if (!pushRightUp)
+                    {
+                        pushRightUp = true;
+                        pushUp = false;
+                        pushRight = false;
+                    }
+                } 
+//            }
         }
         if (axisV >= 0 && axisH >= 0)
         {
@@ -266,7 +305,7 @@ public class InputAxisManager : MonoBehaviour
                     pushLeftUp = true;
                     pushUp = false;
                     pushLeft = false;
-                };
+                }
             }
         }
         if (axisV >= 0 && axisH <= 0)
@@ -279,7 +318,6 @@ public class InputAxisManager : MonoBehaviour
                 }
             }
         }
-
     }
 
     void AxisRightDown()
@@ -293,7 +331,7 @@ public class InputAxisManager : MonoBehaviour
                     pushRightDown = true;
                     pushDown = false;
                     pushRight = false;
-                };
+                }
             }
         }
         if (axisV <= 0 && axisH >= 0)
@@ -319,13 +357,11 @@ public class InputAxisManager : MonoBehaviour
                     pushLeftDown = true;
                     pushDown = false;
                     pushLeft = false;
-                };
+                }
             }
         }
-        if (axisV <= 0 && axisH <= 0)
-        {
-            if (axisV > lastAxisV || axisH > lastAxisH)
-            {
+        if (axisV <= 0 && axisH <= 0){
+            if (axisV > lastAxisV || axisH > lastAxisH){
                 if (pushLeftDown)
                 {
                     pushLeftDown = false;
@@ -336,30 +372,20 @@ public class InputAxisManager : MonoBehaviour
 
     void InclineOn()
     {
-        if (pushRightUp || pushRightDown || pushLeftUp || pushLeftDown)
-        {
-            inclineOn = true;
-        }
-        if (!pushRightUp && !pushRightDown && !pushLeftUp && !pushLeftDown)
-        {
-            inclineOn = false;
-        }
+        if (pushRightUp || pushRightDown || pushLeftUp || pushLeftDown)     inclineOn = true;
+        if (!pushRightUp && !pushRightDown && !pushLeftUp && !pushLeftDown) inclineOn = false;
     }
 
-    void InputAxisRelease()
+    void LineCheck()
     {
-        if (allAxis < allLastAxis)
-        {
-            if (allAxis < 100)
-            {
-                if (on)
-                {
-                    on = false;
-                }
+        if (allH < allLastH || allV < allLastV) notIncline = true;
 
-            }
-        }
+        if (allH == 0 || allV == 0) notIncline = false;
+
+//        if (notIncline) Debug.Log("a");
     }
+
+
 
 
 //    void OneCall()

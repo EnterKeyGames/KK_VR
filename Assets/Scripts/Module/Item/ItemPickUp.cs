@@ -6,6 +6,7 @@ public class ItemPickUp : MonoBehaviour
 {
     [SerializeField] ItemBase itembase;
     [SerializeField] ItemPocket itempocket;
+    public bool isPick;
 
     int itemNum;
     public GameObject pickObj;
@@ -21,35 +22,18 @@ public class ItemPickUp : MonoBehaviour
     {
         if (collider.gameObject.tag == "Item")
         {
-//            Debug.Log("oncollider");
             pickObj = collider.gameObject;
+            isPick = true;
         }
+    }
 
-        if (collider.gameObject.tag != "Item")
+    void OnTriggerExit(Collider collider)
+    {
+        if (collider.gameObject.tag == "Item")
         {
             pickObj = null;
+            isPick = false;
         }
-
-        if (collider == null )
-        {
-            pickObj = null;
-        }
-
-        //       Debug.Log(pickObj);
-        //        if (Input.GetButton("Action"))
-        //        {
-        //            int index = itembase.items.IndexOf(pickObj);
-        //            Debug.Log(index);
-        //            //触れたオブジェクトから何番のアイテムかを識別する
-        //            itempocket.pocketL[itemNum] = itembase.items[itemNum ].GetSprite();
-        //        }
-
-        //触れたオブジェクトから何番のアイテムかを識別する
-        //          for (int i = 0; i < itembase.items.Count; i++)
-        //          {
-        //              object obj =  itembase.items[i].ItemObjectGet();
-        //              
-        //          }
     }
 
     void PickUpAction()
@@ -79,6 +63,16 @@ public class ItemPickUp : MonoBehaviour
                 i++;
             }
         }
+    }
+
+    void pickObjCheck()
+    {
+        //はじめて追加される場合
+    }
+
+    void PickObjAdd()
+    {
+
     }
 }
 

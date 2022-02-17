@@ -10,10 +10,11 @@ public class ItemPocket : MonoBehaviour
 
     //オブジェクト
     [SerializeField] GameObject itemUI;
+    public List<GameObject> pocketIcon;
     public List<GameObject> pocketL;
 
     //変数
-    [SerializeField] int itemNum;
+    public int itemNum;
 
     [SerializeField] bool itemAbove;
     [SerializeField] bool itemRight;
