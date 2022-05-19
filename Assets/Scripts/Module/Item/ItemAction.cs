@@ -15,6 +15,7 @@ public class ItemAction : MonoBehaviour
      //ロープ
      //ガムテープ？
      //エロ本
+     //お金
      //ライター
      //木材
      //鏡

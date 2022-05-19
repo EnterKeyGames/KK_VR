@@ -20,7 +20,6 @@ public class Light : MonoBehaviour
         LightChange();
     }
 
-
     void LightChange()
     {
         if (Input.GetButtonDown("Action"))  isLight = !isLight;
@@ -32,5 +31,3 @@ public class Light : MonoBehaviour
         }
     }
 }
-
- 

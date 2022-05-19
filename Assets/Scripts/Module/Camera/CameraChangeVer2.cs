@@ -5,7 +5,6 @@ using UnityEngine;
 public class CameraChangeVer2 : MonoBehaviour
 {
     [SerializeField] private Transform _camera;
-
     [SerializeField] private Transform _pointRoot;
 
     private int _latestNo;
